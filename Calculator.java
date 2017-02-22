@@ -10,13 +10,15 @@ import java.awt.event.KeyEvent;
  */
 public class Calculator extends JFrame implements ActionListener {
     private CalcPanel panel;
-    private  JPanel panel2;
+    private  RadioPanel rpanel;
     private JButton addButton;
     private JTextField resultField;
 
     public Calculator(){
         panel = new CalcPanel();
-        add(panel,BorderLayout.CENTER);
+        rpanel = new RadioPanel();
+        add(panel,BorderLayout.NORTH);
+        add(rpanel,BorderLayout.WEST);
 
     }
 
