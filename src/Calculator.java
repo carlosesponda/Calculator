@@ -45,7 +45,7 @@ public class Calculator extends JFrame implements ActionListener {
         binLabel = new JLabel("Dec: ");
         binField = new JLabel("0");
         binLabel.setPreferredSize(new Dimension(300, 30));
-        octLabel = new JLabel("Hex: ");
+        octLabel = new JLabel("Oct: ");
         octField = new JLabel("0");
         octLabel.setPreferredSize(new Dimension(300, 30));
         //Radio Buttons
@@ -87,7 +87,7 @@ public class Calculator extends JFrame implements ActionListener {
         Mult = new JButton("*");
         Min = new JButton("-");
         Plu = new JButton("+");
-        Squ = new JButton("Squ()");
+        Squ = new JButton("Sqr()");
         Per = new JButton("%");
         Inv = new JButton("1/x");
         Equ = new JButton("=");
