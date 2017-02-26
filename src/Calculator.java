@@ -19,6 +19,7 @@ public class Calculator extends JFrame implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.FIRST_LINE_START;
 
+        //adds options to the top
         JMenuItem exitAction = new JMenuItem("Exit");
         JMenuItem minimizeAction = new JMenuItem("Hide");
         JMenuItem helpAction = new JMenuItem("Help");
@@ -34,8 +35,7 @@ public class Calculator extends JFrame implements ActionListener {
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
         menuBar.add(helpMenu);
-
-            //adds text
+        //adds text
         decLabel = new JLabel("Dec: ");
         decField = new JLabel("0");
         decLabel.setPreferredSize(new Dimension(300, 30));
@@ -48,11 +48,7 @@ public class Calculator extends JFrame implements ActionListener {
         octLabel = new JLabel("Oct: ");
         octField = new JLabel("0");
         octLabel.setPreferredSize(new Dimension(300, 30));
-        //Radio Buttons
-        //HexButton    = new JRadioButton("Hex");
-        //DecButton   = new JRadioButton("Dec", true);
-        //OctButton = new JRadioButton("Oct");
-        //BinButton = new JRadioButton("Bin");
+        //RadioButtons
         QwordButton    = new JRadioButton("Qword");
         DwordButton   = new JRadioButton("Dword", true);
         WordButton = new JRadioButton("Word");
@@ -92,16 +88,7 @@ public class Calculator extends JFrame implements ActionListener {
         Inv = new JButton("1/x");
         Equ = new JButton("=");
 
-
-
-
-        //... Create a button group and add the buttons.
-        //ButtonGroup bgroup = new ButtonGroup();
-        //bgroup.add(DecButton);
-        //bgroup.add(HexButton);
-        //bgroup.add(OctButton);
-        //bgroup.add(BinButton);
-
+        //Button group for radio
         ButtonGroup wgroup = new ButtonGroup();
         wgroup.add(DwordButton);
         wgroup.add(QwordButton);
@@ -111,7 +98,7 @@ public class Calculator extends JFrame implements ActionListener {
         panel = new JPanel(new GridBagLayout());
 
 
-        //Set locations
+        //Set locations and adds colors to the text fields
         c.gridy=0;
         decField.setOpaque(true);
         decField.setPreferredSize(new Dimension(180, 20));
