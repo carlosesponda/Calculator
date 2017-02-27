@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Stack;
 
 /**
  * Created by espon on 2/8/2017.
@@ -13,6 +14,12 @@ public class Calculator extends JFrame implements ActionListener {
     private JRadioButton HexButton,DecButton,OctButton,BinButton,QwordButton,DwordButton,WordButton,ByteButton;
     private JButton Quot, Mod, A, B, C, D, E, F,BackSpace, CE,Clear,Sev, Eig, Nin,Fou, Fiv, Six, One, Two, Thr, Zer, Dot, Signs, Div, Mult, Min,Plu, Squ, Per,Inv, Equ;
     private JLabel decLabel,decField,hexLabel,hexField,octLabel,octField,binLabel,binField;// main text field for output and input
+    private boolean operator =false;
+    private boolean isDouble = false;
+    private Stack<Integer>  Index = new Stack<Integer>();
+    private Stack<Integer>  binIndex = new Stack<Integer>();
+    private Stack<Integer>  octIndex = new Stack<Integer>();
+    private Stack<Integer>  hexIndex = new Stack<Integer>();
 
     public Calculator(){
         //Controls the locations of the Grid
@@ -221,7 +228,6 @@ public class Calculator extends JFrame implements ActionListener {
         CE.addActionListener(this);
         Clear.addActionListener(this);
         Signs.addActionListener(this);
-
         Div.addActionListener(this);
         Mult.addActionListener(this);
         Min.addActionListener(this);
@@ -229,14 +235,15 @@ public class Calculator extends JFrame implements ActionListener {
         Squ.addActionListener(this);
         Per.addActionListener(this);
         Inv.addActionListener(this);
+
         Equ.addActionListener(this);
         add(panel);
 
 
     }
     private void update(){
-        if(!decField.getText().equals("")) {
-            if (Double.parseDouble(decField.getText()) % 1 == 0) {
+        if(!decField.getText().equals("") && Index.empty()) {
+            if (Double.parseDouble(decField.getText()) % 1 == 0 && !isDouble) {
                 hexField.setText(Integer.toHexString(Integer.parseInt(decField.getText())));
                 binField.setText(Integer.toBinaryString(Integer.parseInt(decField.getText())));
                 octField.setText(Integer.toOctalString(Integer.parseInt(decField.getText())));
@@ -246,6 +253,45 @@ public class Calculator extends JFrame implements ActionListener {
                 octField.setText("Can't Do it with decimals");
             }
         }
+        else if (!decField.getText().equals("")){
+                String substring = decField.getText().substring(Index.peek()+1);
+                String hSubstring = hexField.getText().substring(0,hexIndex.peek()+1);
+                String oSubstring = octField.getText().substring(0,octIndex.peek()+1);
+                String bSubstring = binField.getText().substring(0,binIndex.peek()+1);
+                Double parsed = Double.parseDouble(substring);
+                boolean parsedbool = parsed % 1 == 0;
+                if (parsed % 1 == 0 && !isDouble) {
+                    hexField.setText(hexField.getText()+Integer.toHexString(Integer.parseInt(substring)));
+                    binField.setText(binField.getText()+Integer.toBinaryString(Integer.parseInt(substring)));
+                    octField.setText(octField.getText()+Integer.toOctalString(Integer.parseInt(substring)));
+                } else {
+                    hexField.setText(Double.toHexString(Double.parseDouble(substring)));
+                    binField.setText("Can't Do it with decimals");
+                    octField.setText("Can't Do it with decimals");
+                }
+
+
+            }
+    }
+    private void Back(){
+        decField.setText(decField.getText().substring(0, decField.getText().length() - 1));
+        hexField.setText(hexField.getText().substring(0, hexField.getText().length() - 1));
+        octField.setText(octField.getText().substring(0, octField.getText().length() - 1));
+        binField.setText(binField.getText().substring(0, binField.getText().length() - 1));
+    }
+    private void addOperator(String operator){
+        decField.setText(decField.getText() + operator);
+        hexField.setText(hexField.getText() + operator);
+        octField.setText(octField.getText() + operator);
+        binField.setText(binField.getText() + operator);
+
+    }
+    private void updateStack(){
+        Index.push(decField.getText().length()-1);
+        binIndex.push(binField.getText().length()-1);
+        octIndex.push(octField.getText().length()-1);
+        hexIndex.push(hexField.getText().length()-1);
+
     }
 
 
@@ -254,39 +300,48 @@ public class Calculator extends JFrame implements ActionListener {
         if(e.getSource()==Sev){
             decField.setText(decField.getText()+"7");
             update();
+            operator=false;
             }
 
         if (e.getSource()==Eig){
             decField.setText(decField.getText()+"8");
             update();
+            operator=false;
         }
         if (e.getSource()==Nin){
             decField.setText(decField.getText()+"9");
             update();
+            operator=false;
         }
         if (e.getSource()==Fou){
             decField.setText(decField.getText()+"4");
             update();
+            operator=false;
         }
         if (e.getSource()==Fiv){
             decField.setText(decField.getText()+"5");
             update();
+            operator=false;
         }
         if (e.getSource()==Six){
             decField.setText(decField.getText()+"6");
             update();
+            operator=false;
         }
         if (e.getSource()==Thr){
             decField.setText(decField.getText()+"3");
             update();
+            operator=false;
         }
         if (e.getSource()==Two){
             decField.setText(decField.getText()+"2");
             update();
+            operator=false;
         }
         if (e.getSource()==One){
             decField.setText(decField.getText()+"1");
             update();
+            operator=false;
         }
         if (e.getSource()==Zer){
             decField.setText(decField.getText()+"0");
@@ -295,72 +350,113 @@ public class Calculator extends JFrame implements ActionListener {
         if (e.getSource()==Dot){
             decField.setText(decField.getText()+".");
             update();
+            isDouble=true;
+            operator=false;
         }
+
         if (e.getSource()==BackSpace){
             if(!decField.getText().isEmpty())
             decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            if(operator) {
+                Index.pop();
+                operator=false;
+            }
             update();
         }
-        if(e.getSource()==CE){
-            decField.setText("");
-            hexField.setText("");
-            octField.setText("");
-            binField.setText("");
 
-        }
-        if(e.getSource()==Clear){
+        if(e.getSource()==CE || e.getSource()==Clear){
             decField.setText("");
             hexField.setText("");
             octField.setText("");
             binField.setText("");
+            Index.clear();
         }
         if(e.getSource()==Signs){
-            if(!decField.getText().substring(0,1).equals("-"))
-                decField.setText("-"+decField.getText());
-            else
-                decField.setText(decField.getText().substring(1,decField.getText().length()));
+            if(!decField.getText().substring(0,1).equals("-")) {
+                decField.setText("-" + decField.getText());
+                hexField.setText("-" + hexField.getText());
+                octField.setText("-" + octField.getText());
+                binField.setText("-" + binField.getText());
+            }
+            else {
+                decField.setText(decField.getText().substring(1, decField.getText().length()));
+                hexField.setText(hexField.getText().substring(1, hexField.getText().length()));
+                octField.setText(octField.getText().substring(1, octField.getText().length()));
+                binField.setText(binField.getText().substring(1, binField.getText().length()));
+            }
         }
         if(e.getSource()==Div){
-            if(!decField.getText().substring(decField.getText().length()-1).equals("/"))
-                decField.setText(decField.getText()+"/");
-            else
-                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            if(!decField.getText().substring(decField.getText().length()-1).equals("/")&&!operator) {
+                addOperator("/");
+                operator=true;
+                updateStack();
+            }
+            else {
+                Back();
+                operator=false;
+                Index.pop();
+            }
+
         }
         if(e.getSource()==Mult){
-            if(!decField.getText().substring(decField.getText().length()-1).equals("*"))
-                decField.setText(decField.getText()+"*");
-            else
-                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            if(!decField.getText().substring(decField.getText().length()-1).equals("*")&&!operator) {
+                addOperator("*");
+                operator=true;
+                updateStack();
+            }
+            else {
+                Back();
+                operator=false;
+                Index.pop();
+            }
+
         }
         if(e.getSource()==Min){
-            if(!decField.getText().substring(decField.getText().length()-1).equals("-"))
-                decField.setText(decField.getText()+"-");
-            else
-                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            if(!decField.getText().substring(decField.getText().length()-1).equals("-")&&!operator) {
+                addOperator("-");
+                operator=true;
+                updateStack();
+            }
+            else {
+                Back();
+                operator=false;
+                Index.pop();
+            }
         }
         if(e.getSource()==Plu){
-            if(!decField.getText().substring(decField.getText().length()-1).equals("+"))
-                decField.setText(decField.getText()+"+");
-            else
-                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            if(!decField.getText().substring(decField.getText().length()-1).equals("+") &&!operator) {
+                addOperator("+");
+                operator=true;
+                updateStack();
+            }
+            else {
+                Back();
+                operator=false;
+                Index.pop();
+            }
         }
         if(e.getSource()==Squ){
             if(!decField.getText().equals(""))
                 decField.setText(String.valueOf(Math.sqrt(Double.parseDouble(decField.getText()))));
+            isDouble=true;
+            update();
         }
         if(e.getSource()==Per){
-            if(!decField.getText().substring(decField.getText().length()-1).equals("%"))
-                decField.setText(decField.getText()+"%");
-            else
-                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
-        }
-        if(e.getSource()==Squ){
-            if(!decField.getText().equals(""))
-                decField.setText(String.valueOf(Math.sqrt(Double.parseDouble(decField.getText()))));
+            if(!decField.getText().substring(decField.getText().length()-1).equals("%")&&!operator) {
+                addOperator("%");
+                operator=true;
+                updateStack();
+            }
+            else {
+                Back();
+                operator=false;
+                Index.push(decField.getText().length()-1);
+            }
         }
         if(e.getSource()==Inv){
             if(!decField.getText().equals(""))
                 decField.setText(String.valueOf( 1/Double.parseDouble(decField.getText()) ) );
+            update();
         }
 
     }
