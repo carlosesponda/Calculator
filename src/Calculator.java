@@ -42,7 +42,7 @@ public class Calculator extends JFrame implements ActionListener {
         hexLabel = new JLabel("Hex: ");
         hexField = new JLabel("");
         hexLabel.setPreferredSize(new Dimension(300, 30));
-        binLabel = new JLabel("Dec: ");
+        binLabel = new JLabel("Bin: ");
         binField = new JLabel("");
         binLabel.setPreferredSize(new Dimension(300, 30));
         octLabel = new JLabel("Oct: ");
@@ -234,52 +234,85 @@ public class Calculator extends JFrame implements ActionListener {
 
 
     }
+    private void update(){
+        if(!decField.getText().equals("")) {
+            if (Double.parseDouble(decField.getText()) % 1 == 0) {
+                hexField.setText(Integer.toHexString(Integer.parseInt(decField.getText())));
+                binField.setText(Integer.toBinaryString(Integer.parseInt(decField.getText())));
+                octField.setText(Integer.toOctalString(Integer.parseInt(decField.getText())));
+            } else {
+                hexField.setText(Double.toHexString(Double.parseDouble(decField.getText())));
+                binField.setText("Can't Do it with decimals");
+                octField.setText("Can't Do it with decimals");
+            }
+        }
+    }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==Sev){
             decField.setText(decField.getText()+"7");
-        }
+            update();
+            }
+
         if (e.getSource()==Eig){
             decField.setText(decField.getText()+"8");
+            update();
         }
         if (e.getSource()==Nin){
             decField.setText(decField.getText()+"9");
+            update();
         }
         if (e.getSource()==Fou){
             decField.setText(decField.getText()+"4");
+            update();
         }
         if (e.getSource()==Fiv){
             decField.setText(decField.getText()+"5");
+            update();
         }
         if (e.getSource()==Six){
             decField.setText(decField.getText()+"6");
+            update();
         }
         if (e.getSource()==Thr){
             decField.setText(decField.getText()+"3");
+            update();
         }
         if (e.getSource()==Two){
             decField.setText(decField.getText()+"2");
+            update();
         }
         if (e.getSource()==One){
             decField.setText(decField.getText()+"1");
+            update();
         }
         if (e.getSource()==Zer){
             decField.setText(decField.getText()+"0");
+            update();
         }
         if (e.getSource()==Dot){
             decField.setText(decField.getText()+".");
+            update();
         }
         if (e.getSource()==BackSpace){
             if(!decField.getText().isEmpty())
             decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+            update();
         }
         if(e.getSource()==CE){
             decField.setText("");
+            hexField.setText("");
+            octField.setText("");
+            binField.setText("");
+
         }
         if(e.getSource()==Clear){
             decField.setText("");
+            hexField.setText("");
+            octField.setText("");
+            binField.setText("");
         }
         if(e.getSource()==Signs){
             if(!decField.getText().substring(0,1).equals("-"))

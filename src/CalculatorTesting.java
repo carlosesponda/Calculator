@@ -13,7 +13,7 @@ public class CalculatorTesting {
 
 
         Calculator window = new Calculator();
-        window.setSize(700,500);
+        window.setSize(900,700);
         window.setVisible(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setTitle("My First Calulator");
