@@ -37,16 +37,16 @@ public class Calculator extends JFrame implements ActionListener {
         menuBar.add(helpMenu);
         //adds text
         decLabel = new JLabel("Dec: ");
-        decField = new JLabel("0");
+        decField = new JLabel("");
         decLabel.setPreferredSize(new Dimension(300, 30));
         hexLabel = new JLabel("Hex: ");
-        hexField = new JLabel("0");
+        hexField = new JLabel("");
         hexLabel.setPreferredSize(new Dimension(300, 30));
         binLabel = new JLabel("Dec: ");
-        binField = new JLabel("0");
+        binField = new JLabel("");
         binLabel.setPreferredSize(new Dimension(300, 30));
         octLabel = new JLabel("Oct: ");
-        octField = new JLabel("0");
+        octField = new JLabel("");
         octLabel.setPreferredSize(new Dimension(300, 30));
         //RadioButtons
         QwordButton    = new JRadioButton("Qword");
@@ -206,13 +206,129 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel6.add(Plu);
         rowPanel6.add(Equ);
         panel.add(rowPanel6, c);
+        Sev.addActionListener(this);
+        Eig.addActionListener(this);
+        Nin.addActionListener(this);
+        Fou.addActionListener(this);
+        Fiv.addActionListener(this);
+        Six.addActionListener(this);
+        Thr.addActionListener(this);
+        Two.addActionListener(this);
+        One.addActionListener(this);
+        Zer.addActionListener(this);
+        Dot.addActionListener(this);
+        BackSpace.addActionListener(this);
+        CE.addActionListener(this);
+        Clear.addActionListener(this);
+        Signs.addActionListener(this);
 
+        Div.addActionListener(this);
+        Mult.addActionListener(this);
+        Min.addActionListener(this);
+        Plu.addActionListener(this);
+        Squ.addActionListener(this);
+        Per.addActionListener(this);
+        Inv.addActionListener(this);
+        Equ.addActionListener(this);
         add(panel);
+
+
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==Sev){
+            decField.setText(decField.getText()+"7");
+        }
+        if (e.getSource()==Eig){
+            decField.setText(decField.getText()+"8");
+        }
+        if (e.getSource()==Nin){
+            decField.setText(decField.getText()+"9");
+        }
+        if (e.getSource()==Fou){
+            decField.setText(decField.getText()+"4");
+        }
+        if (e.getSource()==Fiv){
+            decField.setText(decField.getText()+"5");
+        }
+        if (e.getSource()==Six){
+            decField.setText(decField.getText()+"6");
+        }
+        if (e.getSource()==Thr){
+            decField.setText(decField.getText()+"3");
+        }
+        if (e.getSource()==Two){
+            decField.setText(decField.getText()+"2");
+        }
+        if (e.getSource()==One){
+            decField.setText(decField.getText()+"1");
+        }
+        if (e.getSource()==Zer){
+            decField.setText(decField.getText()+"0");
+        }
+        if (e.getSource()==Dot){
+            decField.setText(decField.getText()+".");
+        }
+        if (e.getSource()==BackSpace){
+            if(!decField.getText().isEmpty())
+            decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==CE){
+            decField.setText("");
+        }
+        if(e.getSource()==Clear){
+            decField.setText("");
+        }
+        if(e.getSource()==Signs){
+            if(!decField.getText().substring(0,1).equals("-"))
+                decField.setText("-"+decField.getText());
+            else
+                decField.setText(decField.getText().substring(1,decField.getText().length()));
+        }
+        if(e.getSource()==Div){
+            if(!decField.getText().substring(decField.getText().length()-1).equals("/"))
+                decField.setText(decField.getText()+"/");
+            else
+                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==Mult){
+            if(!decField.getText().substring(decField.getText().length()-1).equals("*"))
+                decField.setText(decField.getText()+"*");
+            else
+                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==Min){
+            if(!decField.getText().substring(decField.getText().length()-1).equals("-"))
+                decField.setText(decField.getText()+"-");
+            else
+                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==Plu){
+            if(!decField.getText().substring(decField.getText().length()-1).equals("+"))
+                decField.setText(decField.getText()+"+");
+            else
+                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==Squ){
+            if(!decField.getText().equals(""))
+                decField.setText(String.valueOf(Math.sqrt(Double.parseDouble(decField.getText()))));
+        }
+        if(e.getSource()==Per){
+            if(!decField.getText().substring(decField.getText().length()-1).equals("%"))
+                decField.setText(decField.getText()+"%");
+            else
+                decField.setText(decField.getText().substring(0,decField.getText().length()-1));
+        }
+        if(e.getSource()==Squ){
+            if(!decField.getText().equals(""))
+                decField.setText(String.valueOf(Math.sqrt(Double.parseDouble(decField.getText()))));
+        }
+        if(e.getSource()==Inv){
+            if(!decField.getText().equals(""))
+                decField.setText(String.valueOf( 1/Double.parseDouble(decField.getText()) ) );
+        }
 
     }
 }
