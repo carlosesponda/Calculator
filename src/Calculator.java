@@ -16,13 +16,15 @@ import java.util.Stack;
  */
 public class Calculator extends JFrame implements ActionListener {
     private JPanel panel;
-    private JRadioButton HexButton,DecButton,OctButton,BinButton,QwordButton,DwordButton,WordButton,ByteButton;
+    private JRadioButton QwordButton,DwordButton,WordButton,ByteButton;
     private JButton Quot, Mod, A, B, C, D, E, F,BackSpace, CE,Clear,Sev, Eig, Nin,Fou, Fiv, Six, One, Two, Thr, Zer, Dot, Signs, Div, Mult, Min,Plu, Squ, Per,Inv, Equ;
-    private JLabel decLabel,decField,hexLabel,hexField,octLabel,octField,binLabel,binField, editLabel,editField;// main text field for output and input
+    private JLabel decLabel,decField,hexLabel,hexField,octLabel,octField,binLabel,binField, editLabel,editField, eLabel, eField;// main text field for output and input
     private boolean operator =false;
     private boolean isDouble = false;
     private JMenuItem helpAction, minimizeAction, hexcopy,dexcopy,bincopy,octcopy;
     private Stack<Integer> Index;
+    private boolean zero=false;
+    private boolean solve = false;
     public Calculator(){
         //Controls the locations of the Grid
         GridBagConstraints c = new GridBagConstraints();
@@ -33,7 +35,7 @@ public class Calculator extends JFrame implements ActionListener {
         //adds options to the top
         //JMenuItem exitAction = new JMenuItem("Exit");
         minimizeAction = new JMenuItem("Hide");
-        helpAction = new JMenuItem("Hello! This is Carlos Esponda's first Calculator, You can't type but you can use the buttons! try it out");
+        helpAction = new JMenuItem("Hello! This is Carlos Esponda's first Calculator, You can't type but you can use the buttons! try it out! Also To negate a number first type the number then press the +/- button");
         hexcopy = new JMenuItem("Copy Hex");
         dexcopy = new JMenuItem("Copy Dec");
         bincopy = new JMenuItem("Copy Bin");
@@ -77,6 +79,9 @@ public class Calculator extends JFrame implements ActionListener {
         editLabel = new JLabel("Edit: ");
         editField = new JLabel("");
         editLabel.setPreferredSize(new Dimension(300, 30));
+        eLabel = new JLabel("Equation: ");
+        eField = new JLabel("");
+        eLabel.setPreferredSize(new Dimension(300, 30));
         //RadioButtons
         QwordButton    = new JRadioButton("Qword");
         DwordButton   = new JRadioButton("Dword", true);
@@ -127,6 +132,16 @@ public class Calculator extends JFrame implements ActionListener {
         panel = new JPanel(new GridBagLayout());
 
         c.gridy=0;
+        eField.setOpaque(true);
+        eField.setPreferredSize(new Dimension(180, 20));
+        eField.setHorizontalAlignment(JLabel.RIGHT);
+        eField.setBackground(new Color(250, 0, 250));
+        JPanel rowe = new JPanel();
+        rowe.add(eLabel);
+        rowe.add(eField);
+        panel.add(rowe,c);
+
+        c.gridy=1;
         editField.setOpaque(true);
         editField.setPreferredSize(new Dimension(180, 20));
         editField.setHorizontalAlignment(JLabel.RIGHT);
@@ -138,7 +153,7 @@ public class Calculator extends JFrame implements ActionListener {
 
 
         //Set locations and adds colors to the text fields
-        c.gridy=1;
+        c.gridy=2;
         decField.setOpaque(true);
         decField.setPreferredSize(new Dimension(180, 20));
         decField.setHorizontalAlignment(JLabel.RIGHT);
@@ -149,7 +164,7 @@ public class Calculator extends JFrame implements ActionListener {
         panel.add(rowPanel0,c);
 
 
-        c.gridy = 2;
+        c.gridy = 3;
         hexField.setOpaque(true);
         hexField.setPreferredSize(new Dimension(180, 20));
         hexField.setHorizontalAlignment(JLabel.RIGHT);
@@ -159,7 +174,7 @@ public class Calculator extends JFrame implements ActionListener {
         row.add(hexField);
         panel.add(row,c);
 
-        c.gridy = 3;
+        c.gridy = 4;
         binField.setOpaque(true);
         binField.setPreferredSize(new Dimension(180, 20));
         binField.setHorizontalAlignment(JLabel.RIGHT);
@@ -169,7 +184,7 @@ public class Calculator extends JFrame implements ActionListener {
         row1.add(binField);
         panel.add(row1,c);
 
-        c.gridy = 4;
+        c.gridy = 5;
         octField.setOpaque(true);
         octField.setPreferredSize(new Dimension(180, 20));
         octField.setHorizontalAlignment(JLabel.RIGHT);
@@ -179,7 +194,7 @@ public class Calculator extends JFrame implements ActionListener {
         row2.add(octField);
         panel.add(row2,c);
 
-        c.gridy = 5;
+        c.gridy = 6;
         JPanel rowPanel1 = new JPanel();
         //rowPanel1.add(HexButton);
         rowPanel1.add(DwordButton);
@@ -188,7 +203,7 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel1.add(Mod);
         panel.add(rowPanel1, c);
 
-        c.gridy=6;
+        c.gridy=7;
         JPanel rowPanel2 = new JPanel();
         //rowPanel2.add(DecButton);
         rowPanel2.add(QwordButton);
@@ -199,7 +214,7 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel2.add(Signs);
         panel.add(rowPanel2, c);
 
-        c.gridy=7;
+        c.gridy=8;
         JPanel rowPanel3 = new JPanel();
         //rowPanel3.add(OctButton);
         rowPanel3.add(WordButton);
@@ -211,7 +226,7 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel3.add(Squ);
         panel.add(rowPanel3, c);
 
-        c.gridy=8;
+        c.gridy=9;
         JPanel rowPanel4 = new JPanel();
         //rowPanel4.add(BinButton);
         rowPanel4.add(ByteButton);
@@ -224,7 +239,7 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel4.add(Per);
         panel.add(rowPanel4, c);
 
-        c.gridy=9;
+        c.gridy=10;
         JPanel rowPanel5 = new JPanel();
         E.setPreferredSize(new Dimension(100,25));
         rowPanel5.add(E);
@@ -235,7 +250,7 @@ public class Calculator extends JFrame implements ActionListener {
         rowPanel5.add(Inv);
         panel.add(rowPanel5, c);
 
-        c.gridy=10;
+        c.gridy=11;
         JPanel rowPanel6 = new JPanel();
         F.setPreferredSize(new Dimension(100,25));
         rowPanel6.add(F);
@@ -278,8 +293,13 @@ public class Calculator extends JFrame implements ActionListener {
             editField.setText(editField.getText().substring(0, editField.getText().length() - 1));
     }
     private void addOperator(String operator){
-        editField.setText(editField.getText()+" "+operator+" ");
-        Index.push(editField.getText().length()-2);
+        if(eField.getText().isEmpty())
+            eField.setText(editField.getText()+" "+operator+" ");
+        else
+            eField.setText(eField.getText()+editField.getText()+" "+operator+" ");
+
+        editField.setText("");
+
     }
     private void addNumber(String n){editField.setText(editField.getText()+n); operator=false;}
     private void update(){
@@ -295,39 +315,55 @@ public class Calculator extends JFrame implements ActionListener {
             }
         }
     }
+    private void equation(boolean b){
+        if(b){
+            eField.setText("");
+            this.solve=false;
+        }
+    }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==Sev){
             addNumber("7");
+            equation(solve);
             }
         if (e.getSource()==Eig){
             addNumber("8");
+            equation(solve);
         }
         if (e.getSource()==Nin){
             addNumber("9");
+            equation(solve);
         }
         if (e.getSource()==Fou){
             addNumber("4");
+            equation(solve);
         }
         if (e.getSource()==Fiv){
             addNumber("5");
+            equation(solve);
         }
         if (e.getSource()==Six){
             addNumber("6");
+            equation(solve);
         }
         if (e.getSource()==Thr){
             addNumber("3");
+            equation(solve);
         }
         if (e.getSource()==Two){
             addNumber("2");
+            equation(solve);
         }
         if (e.getSource()==One){
             addNumber("1");
+            equation(solve);
         }
         if (e.getSource()==Zer){
             addNumber("0");
+            equation(solve);
         }
         if (e.getSource()==Dot){
             addNumber(".");
@@ -335,20 +371,21 @@ public class Calculator extends JFrame implements ActionListener {
         }
         if (e.getSource()==BackSpace){
             if(!editField.getText().isEmpty())
-            editField.setText(editField.getText().substring(0,editField.getText().length()-1));
+                editField.setText(editField.getText().substring(0,editField.getText().length()-1));
         }
-        if(e.getSource()==CE || e.getSource()==Clear){
+        if( e.getSource()==Clear){
             editField.setText("");
         }
+        if( e.getSource()==CE){
+            eField.setText("");
+        }
+
         if(e.getSource()==Signs){
-            if(!editField.getText().substring(0,1).equals("-") && Index.isEmpty()) {
+            if(!editField.getText().substring(0,1).equals("-")) {
                 editField.setText("-" + editField.getText());
             }
-            else if(Index.isEmpty()) {
+            else {
                 editField.setText(editField.getText().substring(1, editField.getText().length()));
-            }
-            else{
-                editField.setText(editField.getText().substring(Index.peek()-1) + " -" + editField.getText().substring(Index.peek()));
             }
         }
         if(e.getSource()==Div){
@@ -427,9 +464,23 @@ public class Calculator extends JFrame implements ActionListener {
         if(e.getSource()==Equ){
             if(!editField.getText().equals(""))
             {
-                decField.setText(String.valueOf(computeInfixExpr(editField.getText())));
+                eField.setText(eField.getText()+ editField.getText());
+                decField.setText(String.valueOf(computeInfixExpr(eField.getText())));
                 update();
-                editField.setText("");
+                if(zero){
+                    editField.setText("");
+                    decField.setText("inf");
+                    hexField.setText("inf");
+                    octField.setText("inf");
+                    binField.setText("inf");
+                    eField.setText("");
+                    zero = false;
+                }
+                else {
+                    editField.setText("");
+                    eField.setText(decField.getText());
+                    solve = true;
+                }
             }
         }
         if(e.getSource()==minimizeAction){
@@ -461,7 +512,13 @@ public class Calculator extends JFrame implements ActionListener {
                     operLeft = operLeft * operRight;
                     break;
                 case "/":
-                    operLeft = operLeft / operRight;
+                    try {
+                        operLeft = operLeft / operRight;
+                    }
+                    catch (Exception e){
+                        zero = true;
+
+                    }
                     break;
                 case "%":
                     operLeft = operLeft % operRight;
@@ -478,10 +535,17 @@ public class Calculator extends JFrame implements ActionListener {
                             operRight = operRight * Integer.valueOf(expr[i++]);
                         }
                         if (operator2.equals("/")) {
-                            operRight = operRight / Integer.valueOf(expr[i++]);
+                            try {
+                                if (Integer.valueOf(expr[i++]) != 0)
+                                    operRight = operRight / Integer.valueOf(expr[i++]);
+                            }
+                            catch (Exception e){
+                                editField.setText("Can't Divide by Zero");
+                            }
                         }
                         if (operator2.equals("%")) {
-                            operRight = operRight % Integer.valueOf(expr[i++]);
+                            if(Integer.valueOf(expr[i++])!=0)
+                                operRight = operRight % Integer.valueOf(expr[i++]);
                         }
                     }
                     if(operator.equals("+"))
