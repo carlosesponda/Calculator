@@ -4,6 +4,8 @@ import javax.script.ScriptException;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,24 +21,39 @@ public class Calculator extends JFrame implements ActionListener {
     private JLabel decLabel,decField,hexLabel,hexField,octLabel,octField,binLabel,binField, editLabel,editField;// main text field for output and input
     private boolean operator =false;
     private boolean isDouble = false;
-    private ScriptEngineManager mgr = new ScriptEngineManager();
-    private ScriptEngine engine = mgr.getEngineByName("JavaScipt");
-
+    private JMenuItem helpAction, minimizeAction, hexcopy,dexcopy,bincopy,octcopy;
+    private Stack<Integer> Index;
     public Calculator(){
         //Controls the locations of the Grid
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-
+       // JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        Index = new Stack<Integer>();
+        //pop = new JPopupMenu("Hello! This is Carlos Esponda's first Calculator, You can't type but you can use the buttons! try it out");
         //adds options to the top
-        JMenuItem exitAction = new JMenuItem("Exit");
-        JMenuItem minimizeAction = new JMenuItem("Hide");
-        JMenuItem helpAction = new JMenuItem("Help");
-        JMenuItem copyAction = new JMenuItem("Copy");
+        //JMenuItem exitAction = new JMenuItem("Exit");
+        minimizeAction = new JMenuItem("Hide");
+        helpAction = new JMenuItem("Hello! This is Carlos Esponda's first Calculator, You can't type but you can use the buttons! try it out");
+        hexcopy = new JMenuItem("Copy Hex");
+        dexcopy = new JMenuItem("Copy Dec");
+        bincopy = new JMenuItem("Copy Bin");
+        octcopy = new JMenuItem("Copy Oct");
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenu editMenu = new JMenu("Edit");
         JMenu viewMenu = new JMenu("View");
         JMenu helpMenu = new JMenu("Help");
+        helpMenu.add(helpAction);
+        viewMenu.add(minimizeAction);
+        editMenu.add(hexcopy);
+        editMenu.add(dexcopy);
+        editMenu.add(bincopy);
+        editMenu.add(octcopy);
+        minimizeAction.addActionListener(this);
+        hexcopy.addActionListener(this);
+        dexcopy.addActionListener(this);
+        bincopy.addActionListener(this);
+        octcopy.addActionListener(this);
 
         setJMenuBar(menuBar);
         menuBar.add(fileMenu);
@@ -257,10 +274,12 @@ public class Calculator extends JFrame implements ActionListener {
 
     }
     private void Back(){
-        editField.setText(editField.getText().substring(0, editField.getText().length() - 1));
+        if(!editField.getText().isEmpty())
+            editField.setText(editField.getText().substring(0, editField.getText().length() - 1));
     }
     private void addOperator(String operator){
         editField.setText(editField.getText()+" "+operator+" ");
+        Index.push(editField.getText().length()-2);
     }
     private void addNumber(String n){editField.setText(editField.getText()+n); operator=false;}
     private void update(){
@@ -322,15 +341,18 @@ public class Calculator extends JFrame implements ActionListener {
             editField.setText("");
         }
         if(e.getSource()==Signs){
-            if(!editField.getText().substring(0,1).equals("-")) {
+            if(!editField.getText().substring(0,1).equals("-") && Index.isEmpty()) {
                 editField.setText("-" + editField.getText());
             }
-            else {
+            else if(Index.isEmpty()) {
                 editField.setText(editField.getText().substring(1, editField.getText().length()));
+            }
+            else{
+                editField.setText(editField.getText().substring(Index.peek()-1) + " -" + editField.getText().substring(Index.peek()));
             }
         }
         if(e.getSource()==Div){
-            if(!editField.getText().substring(editField.getText().length()-1).equals("/")&&!operator) {
+            if(!editField.getText().isEmpty() && !editField.getText().substring(editField.getText().length()-1).equals("/")&&!operator) {
                 addOperator("/");
                 operator=true;
             }
@@ -341,7 +363,7 @@ public class Calculator extends JFrame implements ActionListener {
 
         }
         if(e.getSource()==Mult){
-            if(!editField.getText().substring(editField.getText().length()-1).equals("*")&&!operator) {
+            if(!editField.getText().isEmpty() && !editField.getText().substring(editField.getText().length()-1).equals("*")&&!operator) {
                 addOperator("*");
                 operator=true;
             }
@@ -352,7 +374,7 @@ public class Calculator extends JFrame implements ActionListener {
 
         }
         if(e.getSource()==Min){
-            if(!editField.getText().substring(editField.getText().length()-1).equals("-")&&!operator) {
+            if(!editField.getText().isEmpty() && !editField.getText().substring(editField.getText().length()-1).equals("-")&& !operator ) {
                 addOperator("-");
                 operator=true;
             }
@@ -362,7 +384,7 @@ public class Calculator extends JFrame implements ActionListener {
             }
         }
         if(e.getSource()==Plu){
-            if(!editField.getText().substring(editField.getText().length()-1).equals("+") &&!operator) {
+            if(!editField.getText().isEmpty() && !editField.getText().substring(editField.getText().length()-1).equals("+") &&!operator) {
                 addOperator("+");
                 operator=true;
             }
@@ -373,12 +395,16 @@ public class Calculator extends JFrame implements ActionListener {
             }
         }
         if(e.getSource()==Squ){
-            if(!editField.getText().equals(""))
-                editField.setText(String.valueOf(Math.sqrt(Double.parseDouble(editField.getText()))));
-            isDouble=true;
+            if(!editField.getText().equals("")) {
+                isDouble=true;
+                decField.setText(String.valueOf(Math.sqrt(Double.parseDouble(editField.getText()))));
+                update();
+                editField.setText("");
+                isDouble=false;
+            }
         }
         if(e.getSource()==Per){
-            if(!editField.getText().substring(editField.getText().length()-1).equals("%")&&!operator) {
+            if( !editField.getText().isEmpty() && !editField.getText().substring(editField.getText().length()-1).equals("%")&&!operator ) {
                 addOperator("%");
                 operator=true;
 
@@ -390,16 +416,36 @@ public class Calculator extends JFrame implements ActionListener {
             }
         }
         if(e.getSource()==Inv){
-            if(!editField.getText().equals(""))
-                editField.setText(String.valueOf( 1/Double.parseDouble(editField.getText()) ) );
-
+            if(!editField.getText().equals("")) {
+                isDouble=true;
+                decField.setText(String.valueOf(1 / Double.parseDouble(editField.getText())));
+                update();
+                editField.setText("");
+                isDouble=false;
+            }
         }
         if(e.getSource()==Equ){
             if(!editField.getText().equals(""))
             {
                 decField.setText(String.valueOf(computeInfixExpr(editField.getText())));
                 update();
+                editField.setText("");
             }
+        }
+        if(e.getSource()==minimizeAction){
+            setState(Frame.ICONIFIED);
+        }
+        if(e.getSource()==hexcopy){
+           copy(hexField);
+        }
+        if(e.getSource()==dexcopy){
+           copy(decField);
+        }
+        if(e.getSource()==octcopy){
+            copy(octField);
+        }
+        if(e.getSource()==bincopy){
+            copy(binField);
         }
 
     }
@@ -438,11 +484,19 @@ public class Calculator extends JFrame implements ActionListener {
                             operRight = operRight % Integer.valueOf(expr[i++]);
                         }
                     }
-                    operLeft = operLeft + operRight;
+                    if(operator.equals("+"))
+                        operLeft = operLeft + operRight;
+                    else if(operator.equals("-"))
+                        operLeft = operLeft - operRight;
                     break;
             }
         }
         return operLeft;
     }
-
+    public void copy(JLabel field){
+        String myString = field.getText();
+        StringSelection stringSelection = new StringSelection(myString);
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(stringSelection, null);
+    }
 }
